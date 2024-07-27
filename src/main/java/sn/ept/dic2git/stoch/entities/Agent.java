@@ -8,9 +8,9 @@ public class Agent {
     public List<Integer> services;
     public List<Integer> availability;
     public Double last_served;
-    private Boolean available=true;
+    public Boolean available=true;
 
-    private Boolean isWorking=false;
+    public Boolean isWorking=false;
 
     public Integer agentId;
 
@@ -105,9 +105,9 @@ public class Agent {
         return theAgent;
     }
 
-    public static Boolean availableAgent (List<Agent> listAgent){
+    public static Boolean availableAgent (List<Agent> listAgent, Integer type){
         for (Agent agent : listAgent){
-            if (agent.getWorking() && agent.getAvailable()){
+            if (agent.getWorking() && agent.getAvailable() && agent.hasService(type)){
                 return true;
             }
         }

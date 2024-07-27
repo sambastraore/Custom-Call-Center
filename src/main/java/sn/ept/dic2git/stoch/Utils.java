@@ -15,44 +15,44 @@ public class Utils {
     public static List<Integer> agent1105Availability = new ArrayList<>(List.of(1,2,5,6,7,8));
     public static List<Integer> agent1105Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent6947Availability = new ArrayList<>(List.of(1,2,3,4));
-    public static List<Integer> agent6947Services = new ArrayList<>(List.of(4,0,1,3));
+    public static List<Integer> agent6947Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent6989Availability = new ArrayList<>(List.of(1,2,3,4));
     public static List<Integer> agent6989Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent7440Availability = new ArrayList<>(List.of(1,2,3,4,5,6,7,8,9,11,12));
     public static List<Integer> agent7440Services = new ArrayList<>(List.of(0,1,3,2));
     public static List<Integer> agent8514Availability = new ArrayList<>(List.of(1,2,3,4,5,6));
-    public static List<Integer> agent8514Services = new ArrayList<>(List.of(0,1,3,2));
+    public static List<Integer> agent8514Services = new ArrayList<>(List.of(0,3));
     public static List<Integer> agent9427Availability = new ArrayList<>(List.of(1,2,5,6,7,8,9,10,11,12,15,16));
-    public static List<Integer> agent9427Services = new ArrayList<>(List.of(4,0,1,2,3));
+    public static List<Integer> agent9427Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent9514Availability = new ArrayList<>(List.of(1,2,3,4,5,6,7,8));
     public static List<Integer> agent9514Services = new ArrayList<>(List.of(0,1,2,3));
     public static List<Integer> agent9687Availability = new ArrayList<>(List.of(1,2,7,8,9,10,11));
-    public static List<Integer> agent9687Services = new ArrayList<>(List.of(0,1,2));
+    public static List<Integer> agent9687Services = new ArrayList<>(List.of(0,1));
     public static List<Integer> agent9828Availability = new ArrayList<>(List.of(1,2,3,4,5,6,9,10,11,12,13,14));
-    public static List<Integer> agent9828Services = new ArrayList<>(List.of(4,0,1,2,5,3));
+    public static List<Integer> agent9828Services = new ArrayList<>(List.of(4,0,1,2,3));
     public static List<Integer> agent9515Availability = new ArrayList<>(List.of(3,4,5,6,7,8,9,10));
     public static List<Integer> agent9515Services = new ArrayList<>(List.of(0, 1, 2,3));
     public static List<Integer> agent6926Availability = new ArrayList<>(List.of(5,6,7,8));
     public static List<Integer> agent6926Services = new ArrayList<>(List.of(4,0,1,3));
     public static List<Integer> agent7030Availability = new ArrayList<>(List.of(5,6));
-    public static List<Integer> agent7030Services = new ArrayList<>(List.of(0,1,3));
+    public static List<Integer> agent7030Services = new ArrayList<>(List.of(0,3));
     public static List<Integer> agent1049Availability = new ArrayList<>(List.of(9,10,11,12,13,14,15,16));
     public static List<Integer> agent1049Services = new ArrayList<>(List.of(0,1,3,2));
     public static List<Integer> agent8374Availability = new ArrayList<>(List.of(9,10,11,12));
-    public static List<Integer> agent8374Services = new ArrayList<>(List.of(0,1,3,2));
+    public static List<Integer> agent8374Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent8749Availability = new ArrayList<>(List.of(9,10,11,12));
     public static List<Integer> agent8749Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent7002Availability = new ArrayList<>(List.of(11,12,13,14,15,16));
-    public static List<Integer> agent7002Services = new ArrayList<>(List.of(0,1,3,4));
+    public static List<Integer> agent7002Services = new ArrayList<>(List.of(0,1,3));
     public static List<Integer> agent9113Availability = new ArrayList<>(List.of(11,12,13,14,15,16));
     public static List<Integer> agent9113Services = new ArrayList<>(List.of(0,1,2));
     public static List<Integer> typesServices = new ArrayList<>(List.of(30172,30175,30179,30560,30066,30518));
-    //30172 is 1
-    //30175 is 2
-    //30179 is 3
-    //30560 is 4
-    //30066 is 5
-    //30518 is 6
+    //30172 is 0
+    //30175 is 1
+    //30179 is 2
+    //30560 is 3
+    //30066 is 4
+    //30518 is 5
 
 
     public static Map<Integer,Integer> returnAgentMap(){
@@ -76,6 +76,18 @@ public class Utils {
         agentMap.put(17, 9113);
 
         return agentMap;
+    }
+
+    public static Map<Integer,String> serviceMap(){
+        Map<Integer,String> aMap = new HashMap<>();
+        aMap.put(0, "30172");
+        aMap.put(1, "30175");
+        aMap.put(2, "30179");
+        aMap.put(3, "30560");
+        aMap.put(4, "30066");
+        aMap.put(5, "30518");
+
+        return aMap;
     }
 
 
@@ -149,7 +161,7 @@ public class Utils {
 
             while ((line = br.readLine()) != null) {
                 String[] columns = line.split(csvSplitBy);
-                System.out.println(columns.length);
+                //System.out.println(columns.length);
                 String agentNumber = columns[0];
                 String serviceType = columns[1];
                 double mean = Double.parseDouble(columns[2]);
@@ -167,7 +179,7 @@ public class Utils {
         for (Map.Entry<String, List<Tuple1>> entry : resultMap.entrySet()) {
             System.out.println("Agent Number: " + entry.getKey());
             for (Tuple1 tuple1 : entry.getValue()) {
-                System.out.println("  Service Type: " + tuple1.getServiceType() + ", Mean: " + tuple1.getMean_service_time() + "Std: " + tuple1.getStd_service_time());
+                System.out.println("  Service Type: " + tuple1.getServiceType() + ", Mu: " + tuple1.getMu() + " Sigma: " + tuple1.getSigma());
             }
         }
         return resultMap;
