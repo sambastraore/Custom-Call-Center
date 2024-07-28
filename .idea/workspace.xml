@@ -5,11 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="60d05e0e-8e3b-403d-a024-43c61df6985d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Simulation1.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Simulation1R.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/SimulationR.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/CallData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Tuple2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Simulation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Simulation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Utils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/Utils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Agent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Agent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Tuple1.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Tuple1.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/sn/ept/dic2git/stoch/entities/Client.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +55,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Simulation1R">
     <configuration name="Simulation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="sn.ept.dic2git.stoch.Simulation" />
       <module name="projet-stochastique" />
@@ -65,9 +69,51 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Simulation1" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sn.ept.dic2git.stoch.Simulation1" />
+      <module name="projet-stochastique" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sn.ept.dic2git.stoch.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Simulation1R" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sn.ept.dic2git.stoch.Simulation1R" />
+      <module name="projet-stochastique" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sn.ept.dic2git.stoch.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Utils" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="sn.ept.dic2git.stoch.Utils" />
+      <module name="projet-stochastique" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="sn.ept.dic2git.stoch.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Simulation1R" />
         <item itemvalue="Application.Simulation" />
+        <item itemvalue="Application.Utils" />
+        <item itemvalue="Application.Simulation1" />
       </list>
     </recent_temporary>
   </component>
@@ -81,7 +127,7 @@
       <updated>1721497939159</updated>
       <workItem from="1721497940328" duration="727000" />
       <workItem from="1721563774058" duration="71480000" />
-      <workItem from="1722009441037" duration="33794000" />
+      <workItem from="1722009441037" duration="55539000" />
     </task>
     <servers />
   </component>

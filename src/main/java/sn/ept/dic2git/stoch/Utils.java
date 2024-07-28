@@ -1,7 +1,9 @@
 package sn.ept.dic2git.stoch;
 
+import sn.ept.dic2git.stoch.entities.CallData;
 import sn.ept.dic2git.stoch.entities.Tuple;
 import sn.ept.dic2git.stoch.entities.Tuple1;
+import sn.ept.dic2git.stoch.entities.Tuple2;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -90,6 +92,17 @@ public class Utils {
         return aMap;
     }
 
+    public static Map<Integer,Integer> serviceMap1(){
+        Map<Integer,Integer> aMap = new HashMap<>();
+        aMap.put(30172, 0);
+        aMap.put(30175, 1);
+        aMap.put(30179, 2);
+        aMap.put(30560, 3);
+        aMap.put(30066, 4);
+        aMap.put(30518, 5);
+
+        return aMap;
+    }
 
     public static Map<String,List<Tuple>> ReadLambdas (String csvFile){
         String line;
@@ -148,7 +161,7 @@ public class Utils {
         return resultMap;
     }
 
-    public static Map<String,List<Tuple1>> ReadLogParams(String csvFile){ //la liste des logparams est incomplete
+    public static Map<String,List<Tuple1>> ReadLogParams(String csvFile){
         String line;
         String csvSplitBy = ","; // Délimiteur CSV
         Map<String, List<Tuple1>> resultMap = new HashMap<>();
@@ -184,4 +197,79 @@ public class Utils {
         }
         return resultMap;
     }
+
+
+    public static Map<String,List<Tuple2>> ReadLogParams1(String csvFile){
+        String line;
+        String csvSplitBy = ","; // Délimiteur CSV
+        Map<String, List<Tuple2>> resultMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String headerLine = br.readLine();
+            if (headerLine != null) {
+                String[] headers = headerLine.split(csvSplitBy);
+            }
+
+            while ((line = br.readLine()) != null) {
+                String[] columns = line.split(csvSplitBy);
+                //System.out.println(columns.length);
+                String serviceType = columns[0];
+                double mean = Double.parseDouble(columns[1]);
+                double std = Double.parseDouble(columns[2]);
+
+                Tuple2 tuple2 = new Tuple2(mean,std);
+
+                resultMap.computeIfAbsent(serviceType, k -> new ArrayList<>()).add(tuple2);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<String, List<Tuple2>> entry : resultMap.entrySet()) {
+            System.out.println("Service Type: " + entry.getKey());
+            for (Tuple2 tuple2 : entry.getValue()) {
+                System.out.println("Mu: " + tuple2.getMu() + " Sigma: " + tuple2.getSigma());
+            }
+        }
+        return resultMap;
+    }
+
+
+
+
+        public static List<CallData> readArrivals(String filePath) {
+            List<CallData> callDataList = new ArrayList<>();
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+                String line;
+
+                // Lire et ignorer l'en-tête
+                if ((line = br.readLine()) != null) {
+                    // En-tête lu mais ignoré
+                }
+
+                // Lire les lignes restantes
+                while ((line = br.readLine()) != null) {
+                    String[] values = line.split(","); // Suppose que les valeurs CSV sont séparées par des virgules
+                    if (values.length >= 2) {
+                        double arrivalTime = Double.parseDouble(values[0]);
+                        int serviceType = Integer.parseInt(values[1]);
+                        callDataList.add(new CallData(arrivalTime, serviceType));
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return callDataList;
+        }
+
+    public static void main(String[] args) {
+        List<CallData> myTest = readArrivals("/Users/sambastraore/Desktop/data_arrival.csv");
+        for (CallData data : myTest){
+            System.out.println(data.getArrivalTime());
+        }
+    }
+
+
+
 }
