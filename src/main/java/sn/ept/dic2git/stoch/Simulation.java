@@ -41,8 +41,8 @@ public class Simulation {
     RandomVariateGen[] genArr; //chaque type d'appel à son générateur
     Tally statWaits = new Tally ("Average waiting time per customer");
     Tally waitTimesUnder60s = new Tally("Wait times under 60 seconds");
-    Map<String,List<Tuple1>> logParams = new HashMap<>();
-    Map<String,List<Tuple>> lambdas = new HashMap<>();
+    Map<String,List<Tuple1>> logParams;
+    Map<String,List<Tuple>> lambdas;
 
     public Simulation(String logParamsFile,String lambdasFile){
         agentList.add(new Agent(1,1105,Utils.agent1105Services,Utils.agent1105Availability));
@@ -63,10 +63,8 @@ public class Simulation {
         agentList.add(new Agent(16,7002,Utils.agent7002Services,Utils.agent7002Availability));
         agentList.add(new Agent(17,9113,Utils.agent9113Services,Utils.agent9113Availability));
         genService = new RandomVariateGen[NOMBRE_AGENTS];
-        //mu_log_A = Math.log(muA) - 0.5 * Math.log(1+ sigmaA/Math.pow(muA,2));
-        //sigma_log_A = Math.sqrt(Math.log(1+ sigmaA/Math.pow(muA,2)));
         for (int agent = 0; agent < NOMBRE_AGENTS; agent++) {
-            genService[agent] = new LognormalGen(new MRG32k3a(), 10,0.3); //donner a chaque agent son gen et le changer suivant le type
+            genService[agent] = new LognormalGen(new MRG32k3a(), 10,0.3); //initialisation (à enlever)
         }
         for (int i = 0; i < NOMBRE_SERVICES;i++){
             nextArrival[i] = new Arrival(i);
@@ -74,10 +72,10 @@ public class Simulation {
 
         genArr = new RandomVariateGen[NOMBRE_SERVICES];
         for (int serv = 0; serv < NOMBRE_SERVICES; serv++) {
-            genArr[serv] = new ExponentialGen(new MRG32k3a(), 3); //changer à chaque periode selon si le service appartient a cette periode
+            genArr[serv] = new ExponentialGen(new MRG32k3a(), 3); //initialisation (a enlever)
         }
-        logParams = Utils.ReadLogParams(logParamsFile); //à décommenter apres
-        lambdas = Utils.ReadLambdas(lambdasFile); // à décommenter après
+        logParams = Utils.ReadLogParams(logParamsFile);
+        lambdas = Utils.ReadLambdas(lambdasFile);
 
     }
     class  Call {
@@ -89,11 +87,6 @@ public class Simulation {
 
             this.type = type;
 
-            //for (int agent = 0; agent < NOMBRE_AGENTS; agent++){
-            //    serviceTimes[agent] = genService[agent].nextDouble();
-            //}
-            //voir pour chaque service, s'il y a un serveur dispo
-            //boolean anyAgentAvailable = false;
             for (Agent agent : agentList){
                 //System.out.println("last served : " + agent.getLast_served());
                 //System.out.println("available : " + agent.getAvailable() + " ; serviceType : " + agent.hasService(type) + " work on this period : " + agent.getWorking()  + " agent : " + Agent.servedLast(agentList));
@@ -102,9 +95,9 @@ public class Simulation {
                     System.out.println("servi par : " + agent.agent_number + " a " + Sim.time());
                     double mu = 0.0;
                     double sigma = 0.0;
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     agent.setAvailable(false);
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     //anyAgentAvailable = true;
                     int index = agentList.indexOf(agent);
                     //changer genService selon le type de l'appel (attribut type)
@@ -128,7 +121,6 @@ public class Simulation {
                     return;
                 }
             }
-               //if (!anyAgentAvailable){
                    System.out.println("ajoutee a la queue : appel " + type );
                    arrivalTime = Sim.time();
                    //System.out.println("Temps d arrivee : " + arrivalTime);
@@ -148,7 +140,7 @@ public class Simulation {
             }
             return null;
         }
-        public  void endWait(){
+        public void endWait(){
             System.out.println("On retire de la queue : " + this.type + " a " + Sim.time());
             double wait = Sim.time() - arrivalTime;
             //System.out.println("Temps d'attente : " + wait);
@@ -205,6 +197,9 @@ public class Simulation {
                         System.out.println("agent dispo : " + agent.agentId);
                         agent.setWorking(true);
                     }
+                    else{
+                        agent.setWorking(false);
+                    }
                 }
                 //System.out.println("intitialisation des agents... fait");
                 //changer les paramètres
@@ -219,7 +214,6 @@ public class Simulation {
                             System.out.println(genArr[serv]);
                         }
                     }
-
                 }
 
 

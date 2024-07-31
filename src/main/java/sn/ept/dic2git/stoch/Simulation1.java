@@ -95,9 +95,9 @@ public class Simulation1 {
                     System.out.println("servi par : " + agent.agent_number + " a " + Sim.time());
                     double mu = 0.0;
                     double sigma = 0.0;
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     agent.setAvailable(false);
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     //anyAgentAvailable = true;
                     int index = agentList.indexOf(agent);
                     //changer genService selon le type de l'appel (attribut type)
@@ -192,6 +192,8 @@ public class Simulation1 {
                     if (agent.getAvailability().contains(j+1)){
                         System.out.println("agent dispo : " + agent.agentId);
                         agent.setWorking(true);
+                    } else {
+                        agent.setWorking(false);
                     }
                 }
                 //System.out.println("intitialisation des agents... fait");

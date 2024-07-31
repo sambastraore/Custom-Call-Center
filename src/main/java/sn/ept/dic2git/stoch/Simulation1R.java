@@ -18,16 +18,14 @@ public class Simulation1R {
     static final double MINUTE = 60;
     static final int NOMBRE_AGENTS = 17;
 
-
     List<Agent> agentList = new ArrayList<>();
 
 
     double openingTime = 8 * HOUR; //temps d'ouverture
     int numPeriods = 16; //nombre de periodes
 
-    //garder en tête que je dois utiliser les agents à chaque periode
 
-    List<CallData> arrivals = new ArrayList<>();
+    List<CallData> arrivals;
 
     List<Call> queue = new ArrayList<>();
 
@@ -36,10 +34,9 @@ public class Simulation1R {
     RandomVariateGen[] genArr; //chaque type d'appel à son générateur
     Tally statWaits = new Tally ("Average waiting time per customer");
     Tally waitTimesUnder60s = new Tally("Wait times under 60 seconds");
-    Map<String,List<Tuple2>> logParams1 = new HashMap<>();
-    Map<String,List<Tuple>> lambdas = new HashMap<>();
+    Map<String,List<Tuple2>> logParams1;
 
-    public Simulation1R(String logParamsFile,String lambdasFile){
+    public Simulation1R(String logParamsFile, String arrivalsFile){
         agentList.add(new Agent(1,1105,Utils.agent1105Services,Utils.agent1105Availability));
         agentList.add(new Agent(2,6947,Utils.agent6947Services,Utils.agent6947Availability));
         agentList.add(new Agent(3,6989,Utils.agent6989Services,Utils.agent6989Availability));
@@ -58,15 +55,11 @@ public class Simulation1R {
         agentList.add(new Agent(16,7002,Utils.agent7002Services,Utils.agent7002Availability));
         agentList.add(new Agent(17,9113,Utils.agent9113Services,Utils.agent9113Availability));
         genService = new RandomVariateGen[NOMBRE_AGENTS];
-        //mu_log_A = Math.log(muA) - 0.5 * Math.log(1+ sigmaA/Math.pow(muA,2));
-        //sigma_log_A = Math.sqrt(Math.log(1+ sigmaA/Math.pow(muA,2)));
-        for (int agent = 0; agent < NOMBRE_AGENTS; agent++) {
-            genService[agent] = new LognormalGen(new MRG32k3a(), 10,0.3); //donner a chaque agent son gen et le changer suivant le type
-        }
+
 
 
         logParams1 = Utils.ReadLogParams1(logParamsFile); //à décommenter apres
-        arrivals = Utils.readArrivals("/Users/sambastraore/Desktop/data_arrival.csv");
+        arrivals = Utils.readArrivals(arrivalsFile);
 
 
     }
@@ -111,6 +104,7 @@ public class Simulation1R {
                     //System.out.println("service time : " + serviceTime);
                     System.out.println("service time : " + serviceTime);
                     statWaits.add(0.0);
+                    System.out.println("ajoutee dans le tally");
                     waitTimesUnder60s.add(0.0);
                     new CallCompletion(agent).schedule(serviceTime);
                     return;
@@ -123,7 +117,7 @@ public class Simulation1R {
             queue.add(this); // à revoir
             //System.out.println("A ajouter dans la file");
             //System.out.println("ajouter a la queue : " + this.type );
-            //System.out.println("Nombre d elements dans la file : " + queue.size());
+            System.out.println("Nombre d elements dans la file : " + queue.size());
 
             // }
             //System.out.println("booleen de disponibilite : " + anyAgentAvailable);
@@ -131,12 +125,13 @@ public class Simulation1R {
         }
 
         public static Call getCall(List<Call> queue) {
-            for (Call call :  queue){
-                return call;
+            if (!queue.isEmpty()) {
+                return queue.get(0);
             }
             return null;
         }
         public  void endWait(){
+
             System.out.println("On retire de la queue : " + this.type + " a " + Sim.time());
             double wait = Sim.time() - arrivalTime;
             //System.out.println("Temps d'attente : " + wait);
@@ -166,6 +161,7 @@ public class Simulation1R {
                 new CallCompletion(agentToServe).schedule(serviceTime);
                 System.out.println("wait : " + wait);
                 statWaits.add(wait);
+                System.out.println("ajoutee dans le tally");
                 if(wait < 60)
                     waitTimesUnder60s.add(wait);
             }
@@ -189,6 +185,8 @@ public class Simulation1R {
                     if (agent.getAvailability().contains(j + 1)) {
                         System.out.println("agent dispo : " + agent.agentId);
                         agent.setWorking(true);
+                    } else {
+                        agent.setWorking(false);
                     }
                 }
                 //System.out.println("intitialisation des agents... fait");
@@ -196,13 +194,14 @@ public class Simulation1R {
                 //voir pour chaque service, si pour la periode concernee y a un element (dans le map des lambda)
 
                 if (j != 0) {
+                    System.out.println("je verifie la queue");
                     checkQueue();
                     //System.out.println("Verification de la queue...");
                     //reschedule
 
                 }
                 new NextPeriod(j + 1).schedule(30 * MINUTE);
-                System.out.println("taille queue : " + queue.size());
+                //System.out.println("taille queue : " + queue.size());
 
             }
 
@@ -220,6 +219,7 @@ public class Simulation1R {
             this.service=service;
         }
         public void actions(){
+
             System.out.println("arrivee " + service + " a " + Sim.time());
             new Call(service);
         }
@@ -242,6 +242,7 @@ public class Simulation1R {
     public void checkQueue(){
         Call theCall = Call.getCall(queue);
         while (theCall != null && Agent.availableAgent(agentList,theCall.type)){
+            System.out.println("test" + theCall + " "+Agent.availableAgent(agentList,theCall.type));
             System.out.println("On prend de la queue " + theCall.type);
             theCall.endWait();
             queue.remove(theCall);
@@ -269,7 +270,7 @@ public class Simulation1R {
         System.out.println(waitTimesUnder60s.report());
     }
     public static void main(String[] args) {
-        Simulation1R mySimulation = new Simulation1R("/Users/sambastraore/Desktop/logparams2.csv","/Users/sambastraore/Desktop/lambdas.csv");
+        Simulation1R mySimulation = new Simulation1R("/Users/sambastraore/Desktop/logparams2.csv","/Users/sambastraore/Desktop/data_arrival.csv");
         mySimulation.simulateOneDay();
         System.out.println("Simulation terminée avec succès !");
     }

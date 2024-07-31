@@ -31,20 +31,17 @@ public class SimulationR {
     double openingTime = 8 * HOUR; //temps d'ouverture
     int numPeriods = 16; //nombre de periodes
 
-    //garder en tête que je dois utiliser les agents à chaque periode
 
-    List<CallData> arrivals = new ArrayList<>();
+    List<CallData> arrivals;
     List<Call> queue = new ArrayList<>();
 
     RandomVariateGen[] genService; //chaque agent à son générateur
 
-    RandomVariateGen[] genArr; //chaque type d'appel à son générateur
     Tally statWaits = new Tally ("Average waiting time per customer");
     Tally waitTimesUnder60s = new Tally("Wait times under 60 seconds");
-    Map<String,List<Tuple1>> logParams = new HashMap<>();
-    Map<String,List<Tuple>> lambdas = new HashMap<>();
+    Map<String,List<Tuple1>> logParams;
 
-    public SimulationR(String logParamsFile,String lambdasFile){
+    public SimulationR(String logParamsFile, String arrivalsFile){
         agentList.add(new Agent(1,1105,Utils.agent1105Services,Utils.agent1105Availability));
         agentList.add(new Agent(2,6947,Utils.agent6947Services,Utils.agent6947Availability));
         agentList.add(new Agent(3,6989,Utils.agent6989Services,Utils.agent6989Availability));
@@ -63,15 +60,12 @@ public class SimulationR {
         agentList.add(new Agent(16,7002,Utils.agent7002Services,Utils.agent7002Availability));
         agentList.add(new Agent(17,9113,Utils.agent9113Services,Utils.agent9113Availability));
         genService = new RandomVariateGen[NOMBRE_AGENTS];
-        //mu_log_A = Math.log(muA) - 0.5 * Math.log(1+ sigmaA/Math.pow(muA,2));
-        //sigma_log_A = Math.sqrt(Math.log(1+ sigmaA/Math.pow(muA,2)));
-        for (int agent = 0; agent < NOMBRE_AGENTS; agent++) {
-            genService[agent] = new LognormalGen(new MRG32k3a(), 10,0.3); //donner a chaque agent son gen et le changer suivant le type
-        }
+
+
 
 
         logParams = Utils.ReadLogParams(logParamsFile); //à décommenter apres
-        arrivals = Utils.readArrivals("/Users/sambastraore/Desktop/data_arrival.csv");
+        arrivals = Utils.readArrivals(arrivalsFile);
 
 
 
@@ -85,11 +79,7 @@ public class SimulationR {
 
             this.type = type;
 
-            //for (int agent = 0; agent < NOMBRE_AGENTS; agent++){
-            //    serviceTimes[agent] = genService[agent].nextDouble();
-            //}
-            //voir pour chaque service, s'il y a un serveur dispo
-            //boolean anyAgentAvailable = false;
+
             for (Agent agent : agentList){
                 //System.out.println("last served : " + agent.getLast_served());
                 //System.out.println("available : " + agent.getAvailable() + " ; serviceType : " + agent.hasService(type) + " work on this period : " + agent.getWorking()  + " agent : " + Agent.servedLast(agentList));
@@ -98,9 +88,9 @@ public class SimulationR {
                     System.out.println("servi par : " + agent.agent_number + " a " + Sim.time());
                     double mu = 0.0;
                     double sigma = 0.0;
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     agent.setAvailable(false);
-                    System.out.println(agent.agent_number + " available : " + agent.getAvailable());
+                    //System.out.println(agent.agent_number + " available : " + agent.getAvailable());
                     //anyAgentAvailable = true;
                     int index = agentList.indexOf(agent);
                     //changer genService selon le type de l'appel (attribut type)
@@ -115,7 +105,7 @@ public class SimulationR {
                         throw new IllegalArgumentException("Sigma must be greater than zero for agent " + agent.agent_number + " and service type " + type);
                     }
                     genService[index] = new LognormalGen(new MRG32k3a(),mu ,sigma);
-                    serviceTime = genService[index].nextDouble();
+                    serviceTime = genService[index].nextDouble() ;
                     //System.out.println("service time : " + serviceTime);
                     System.out.println("service time : " + serviceTime);
                     statWaits.add(0.0);
@@ -139,8 +129,8 @@ public class SimulationR {
         }
 
         public static Call getCall(List<Call> queue) {
-            for (Call call :  queue){
-                return call;
+            if (!queue.isEmpty()) {
+                return queue.get(0);
             }
             return null;
         }
@@ -166,12 +156,11 @@ public class SimulationR {
                     if (Objects.equals(tuple.getServiceType(), Utils.serviceMap().get(type))){
                         mu = tuple.getMu();
                         sigma = tuple.getSigma();
-
                     }
                 }
                 index = agentList.indexOf(agentToServe);
                 genService[index] = new LognormalGen(new MRG32k3a(),mu ,sigma);
-                serviceTime = genService[index].nextDouble();
+                serviceTime = genService[index].nextDouble() ;
                 System.out.println("service time : " + serviceTime);
                 agentToServe.setAvailable(false);
                 new CallCompletion(agentToServe).schedule(serviceTime);
@@ -201,6 +190,9 @@ public class SimulationR {
                         System.out.println("agent dispo : " + agent.agentId);
                         agent.setWorking(true);
                     }
+                    else {
+                        agent.setWorking(false);
+                    }
                 }
                 //System.out.println("initialisation des agents... fait");
                 //changer les paramètres
@@ -209,9 +201,6 @@ public class SimulationR {
 
                  if (j!=0) {
                     checkQueue();
-                    //System.out.println("Verification de la queue...");
-                    //reschedule
-
                 }
                 new NextPeriod(j+1).schedule(30 * MINUTE);
                 System.out.println("taille queue : " + queue.size());
@@ -248,8 +237,7 @@ public class SimulationR {
 
     public void checkQueue(){
         Call theCall = Call.getCall(queue);
-        while (theCall != null && Agent.availableAgent(agentList,theCall.type)){
-            System.out.println("On prend de la queue " + theCall.type);
+        while (theCall != null && Agent.availableAgent(agentList,theCall.type)){ //potentielle limite
             theCall.endWait();
             queue.remove(theCall);
             theCall = Call.getCall(queue);
@@ -264,9 +252,6 @@ public class SimulationR {
         statWaits.init();
         waitTimesUnder60s.init();
         for (CallData data : arrivals){
-            //System.out.println(data.getArrivalTime());
-            //Event nextArrival = new Arrival(data.getServiceType());
-            //nextArrival.schedule(data.getArrivalTime());
             new Arrival(Utils.serviceMap1().get(data.getServiceType())).schedule(data.getArrivalTime());
 
         }
@@ -277,7 +262,7 @@ public class SimulationR {
         System.out.println(waitTimesUnder60s.report());
     }
     public static void main(String[] args) {
-        SimulationR mySimulation = new SimulationR("/Users/sambastraore/Desktop/logparams1.csv","/Users/sambastraore/Desktop/lambdas.csv");
+        SimulationR mySimulation = new SimulationR("/Users/sambastraore/Desktop/logparams1.csv","/Users/sambastraore/Desktop/data_arrival.csv");
         mySimulation.simulateOneDay();
         System.out.println("Simulation terminée avec succès !");
     }
